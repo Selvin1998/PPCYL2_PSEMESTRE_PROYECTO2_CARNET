@@ -74,15 +74,58 @@ def cargar_configuracion():
                     "carnet": carnet
                 })
 
+        # =========================
+        # VALIDACIONES
+        # =========================
+
+        codigos_cursos = {c["codigo"] for c in cursos}
+        registros_tutores = {t["registro_personal"] for t in tutores}
+        carnets_estudiantes = {e["carnet"] for e in estudiantes}
+
+        asignaciones_tutores_validas = []
+        asignaciones_tutores_invalidas = []
+
+        for a in asignaciones_tutores:
+            if a["codigo"] in codigos_cursos and a["registro_personal"] in registros_tutores:
+                asignaciones_tutores_validas.append(a)
+            else:
+                asignaciones_tutores_invalidas.append(a)
+
+        asignaciones_estudiantes_validas = []
+        asignaciones_estudiantes_invalidas = []
+
+        for a in asignaciones_estudiantes:
+            if a["codigo"] in codigos_cursos and a["carnet"] in carnets_estudiantes:
+                asignaciones_estudiantes_validas.append(a)
+            else:
+                asignaciones_estudiantes_invalidas.append(a)
+
+        # =========================
+        # RESPUESTA FINAL
+        # =========================
+
         return jsonify({
             "status": "success",
             "message": "Configuración cargada correctamente",
-            "data": {
+            "resumen": {
+                "total_cursos": len(cursos),
+                "total_tutores": len(tutores),
+                "total_estudiantes": len(estudiantes),
+                "total_asignaciones_tutores": len(asignaciones_tutores),
+                "total_asignaciones_estudiantes": len(asignaciones_estudiantes),
+                "tutores_validos": len(asignaciones_tutores_validas),
+                "tutores_invalidos": len(asignaciones_tutores_invalidas),
+                "estudiantes_validos": len(asignaciones_estudiantes_validas),
+                "estudiantes_invalidos": len(asignaciones_estudiantes_invalidas)
+            },
+            "detalle": {
                 "cursos": cursos,
                 "tutores": tutores,
                 "estudiantes": estudiantes,
-                "asignaciones_tutores": asignaciones_tutores,
-                "asignaciones_estudiantes": asignaciones_estudiantes
+                "asignaciones_tutores_validas": asignaciones_tutores_validas,
+                "asignaciones_tutores_invalidas": asignaciones_tutores_invalidas,
+                "asignaciones_estudiantes_validas": asignaciones_estudiantes_validas,
+                "asignaciones_estudiantes_invalidas": asignaciones_estudiantes_invalidas
             }
         })
 
