@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<configuraciones>
+    <cursos>
+        <curso codigo="770">Matemática</curso>
+        <curso codigo="771">Física</curso>
+        <curso codigo="772">Programación</curso>
+    </cursos>
+
+    <tutores>
+        <tutor registro_personal="1111" contrasenia="1234">Juan Pérez</tutor>
+        <tutor registro_personal="2222" contrasenia="1234">Ana López</tutor>
+    </tutores>
+
+    <estudiantes>
+        <estudiante carnet="2023001" contrasenia="1234">Carlos Méndez</estudiante>
+        <estudiante carnet="2023002" contrasenia="1234">María Gómez</estudiante>
+    </estudiantes>
+
+    <asignaciones>
+        <c_tutores>
+            <tutor_curso codigo="770">1111</tutor_curso>
+            <tutor_curso codigo="771">2222</tutor_curso>
+        </c_tutores>
+
+        <c_estudiante>
+            <estudiante_curso codigo="770">2023001</estudiante_curso>
+            <estudiante_curso codigo="771">2023002</estudiante_curso>
+        </c_estudiante>
+    </asignaciones>
+</configuraciones>
