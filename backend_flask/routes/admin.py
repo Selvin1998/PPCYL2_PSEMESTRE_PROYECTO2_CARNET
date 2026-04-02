@@ -162,3 +162,11 @@ def ver_usuarios():
             "estudiantes": db["estudiantes"]
         }
     })
+
+
+@admin_bp.route("/estado", methods=["GET"])
+def ver_estado():
+    return jsonify({
+        "status": "success",
+        "data": db
+    })
