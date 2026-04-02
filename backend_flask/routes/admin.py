@@ -102,6 +102,16 @@ def cargar_configuracion():
                 asignaciones_estudiantes_invalidas.append(a)
 
         # =========================
+        # GUARDAR EN MEMORIA
+        # =========================
+
+        db["cursos"] = cursos
+        db["tutores"] = tutores
+        db["estudiantes"] = estudiantes
+        db["asignaciones_tutores"] = asignaciones_tutores_validas
+        db["asignaciones_estudiantes"] = asignaciones_estudiantes_validas
+
+        # =========================
         # RESPUESTA FINAL
         # =========================
 
@@ -141,3 +151,14 @@ def cargar_configuracion():
             "status": "error",
             "message": str(e)
         }), 400
+
+
+@admin_bp.route("/usuarios", methods=["GET"])
+def ver_usuarios():
+    return jsonify({
+        "status": "success",
+        "data": {
+            "tutores": db["tutores"],
+            "estudiantes": db["estudiantes"]
+        }
+    })
