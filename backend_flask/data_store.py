@@ -1,3 +1,5 @@
+from matriz_dispersa import MatrizDispersa
+
 db = {
     "admin": {
         "username": "AdminPPCYL2",
@@ -9,5 +11,6 @@ db = {
     "estudiantes": [],
     "asignaciones_tutores": [],
     "asignaciones_estudiantes": [],
-    "horarios": []
+    "horarios": [],
+    "notas": {}
 }
