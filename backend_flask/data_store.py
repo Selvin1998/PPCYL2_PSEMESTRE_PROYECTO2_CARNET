@@ -1,5 +1,3 @@
-# Almacenamiento temporal en memoria
-
 db = {
     "admin": {
         "username": "AdminPPCYL2",
@@ -10,5 +8,6 @@ db = {
     "tutores": [],
     "estudiantes": [],
     "asignaciones_tutores": [],
-    "asignaciones_estudiantes": []
+    "asignaciones_estudiantes": [],
+    "horarios": []
 }
