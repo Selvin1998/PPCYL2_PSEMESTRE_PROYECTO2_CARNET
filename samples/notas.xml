@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<datos>
+    <curso codigo="770">Matemática</curso>
+    <notas>
+        <actividad nombre="Tarea1" carnet="2023001">90</actividad>
+        <actividad nombre="Tarea2" carnet="2023001">75</actividad>
+        <actividad nombre="Tarea1" carnet="2023002">88</actividad>
+        <actividad nombre="Tarea2" carnet="2023002">101</actividad>
+    </notas>
+</datos>
