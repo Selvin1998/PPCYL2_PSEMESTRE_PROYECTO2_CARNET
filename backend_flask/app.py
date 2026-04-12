@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 from routes.auth import auth_bp
 from routes.admin import admin_bp
 from routes.tutor import tutor_bp
+from routes.notas import notas_bp
 
 app = Flask(__name__)
 
@@ -16,6 +17,7 @@ def health():
 app.register_blueprint(auth_bp, url_prefix="/api")
 app.register_blueprint(admin_bp, url_prefix="/api")
 app.register_blueprint(tutor_bp, url_prefix="/api")
+app.register_blueprint(notas_bp, url_prefix="/api")
 
 # Ejecutar servidor
 if __name__ == '__main__':
