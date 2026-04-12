@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<horarios>
+    <curso codigo="IPC2">Mi horario de curso es HorarioI: 09:40 HorarioF: 10:30</curso>
+    <curso codigo="MAT1">Elijo este horario HorarioI: 08:00 HorarioF: 08:50</curso>
+    <curso codigo="XYZ">HorarioI: 10:00 HorarioF: 11:00</curso>
+</horarios>
