@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <horarios>
-    <curso codigo="770">Mi horario es HorarioI: 09:40 HorarioF: 10:30</curso>
-    <curso codigo="771">HorarioI: 08:00 HorarioF: 08:50</curso>
+    <curso codigo="770">HorarioI: 09:00 HorarioF: 10:00</curso>
     <curso codigo="999">HorarioI: 10:00 HorarioF: 11:00</curso>
 </horarios>
