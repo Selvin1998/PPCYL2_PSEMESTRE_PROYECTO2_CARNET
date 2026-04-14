@@ -57,37 +57,7 @@ Método: GET
 http://127.0.0.1:5000/reporte
  Generación de Reportes
 
-El sistema genera automáticamente un archivo PDF con la visualización de los datos utilizando Graphviz.
-
-Ubicación:
-
-/reportes/reporte_notas.pdf
- Pruebas
-
-Las pruebas de la API se realizaron utilizando Postman, enviando solicitudes HTTP y verificando las respuestas del sistema.
-
- Autor
-
-Edgar Leonel Patzan Iquite
-
- Fecha de entrega
-
-13 de Abril 2026
-
-
----
-
-#  RESULTADO
-
-Con esto ya tienemos:
-
-✔ Proyecto documentado  
-✔ Más profesional  
-✔ Más claro para el catedrático  
-
----
-
-#  SIGUIENTE PASO
+}
 
 
 
