@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cargar XML</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f4f4;
+            text-align: center;
+        }
+
+        textarea {
+            width: 60%;
+            height: 200px;
+            padding: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #4facfe;
+            color: white;
+            border: none;
+            margin-top: 10px;
+        }
+
+        a {
+            display: block;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Cargar XML</h1>
+
+<form method="post">
+    {% csrf_token %}
+    <textarea name="xml_data" placeholder="Pega aquí el XML"></textarea><br>
+    <button type="submit">Enviar</button>
+</form>
+
+<p>{{ mensaje }}</p>
+
+<a href="/admin-panel/">Volver</a>
+
+</body>
+</html>

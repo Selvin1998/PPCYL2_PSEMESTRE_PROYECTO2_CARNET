@@ -1,0 +1,11 @@
+<h1>Panel Tutor</h1>
+
+<h3>Cargar Notas XML</h3>
+<form method="post" action="/cargar-xml/">
+    {% csrf_token %}
+    <textarea name="xml" rows="10" cols="50"></textarea><br>
+    <button type="submit">Subir Notas</button>
+</form>
+
+<a href="/ver-notas/">Ver Notas</a><br>
+<a href="/grafico/">Ver Gráfico</a>
