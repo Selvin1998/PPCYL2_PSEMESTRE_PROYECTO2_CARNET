@@ -1,0 +1,7 @@
+// Reporte de Notas
+digraph {
+	rankdir=TB
+	R [label="REPORTE DE NOTAS
+Total: 0
+Promedio: 0" fillcolor=lightblue shape=box style=filled]
+}
