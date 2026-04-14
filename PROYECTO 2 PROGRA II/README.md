@@ -68,7 +68,7 @@ Las pruebas de la API se realizaron utilizando Postman, enviando solicitudes HTT
 
  Autor
 
-Edgar Leonel Patzan Iquite
+selvin Chuc, Nohely Arteaga, Edgar Patzan, Carlos Lópes.
 
  Fecha de entrega
 
@@ -76,18 +76,6 @@ Edgar Leonel Patzan Iquite
 
 
 ---
-
-#  RESULTADO
-
-Con esto ya tienemos:
-
-✔ Proyecto documentado  
-✔ Más profesional  
-✔ Más claro para el catedrático  
-
----
-
-#  SIGUIENTE PASO
 
 
 
