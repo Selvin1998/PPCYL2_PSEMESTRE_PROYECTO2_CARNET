@@ -1,6 +1,6 @@
 # IPC2-AcadNet - Sistema de Gestión Educativa
 
-Sistema completo de gestión educativa con tres perfiles de usuario: Administrador, Tutor y Estudiante. Implementado con backend Flask y frontend Django.
+Sistema completo de gestión - tres perfiles de usuario: Administrador, Tutor y Estudiante. Implementado con backend Flask y frontend Django.
 
 ## Características Principales
 
@@ -231,12 +231,3 @@ Si tienes problemas o preguntas:
 2. Abre un issue en GitHub
 3. Contacta al desarrollador
 
-## Versiones
-
-- **v1.0** - Versión inicial con funcionalidades básicas
-- **v1.1** - Agregada funcionalidad CRUD para usuarios
-- **v1.2** - Mejoras en interfaz y reportes
-
----
-
-**Desarrollado para el curso IPC2 - Universidad de San Carlos de Guatemala**
