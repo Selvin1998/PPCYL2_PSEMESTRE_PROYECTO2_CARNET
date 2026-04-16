@@ -10,6 +10,18 @@ app = Flask(__name__)
 from flask_cors import CORS
 CORS(app)
 
+@app.route('/', methods=['GET'])
+def home():
+    return jsonify({
+        "status": "success",
+        "message": "Bienvenido a la API del Proyecto",
+        "endpoints": {
+            "health": "/health",
+            "test": "/test",
+            "api": "/api/*"
+        }
+    })
+
 @app.route('/health', methods=['GET'])
 def health():
     return jsonify({

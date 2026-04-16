@@ -1,0 +1,385 @@
+{% extends 'base.html' %}
+
+{% block title %}Panel Tutor - Sistema de Gestión Educativa{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h4>👨‍🏫 Panel del Tutor - {{ user.nombre }}</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Sección de Horarios -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h5>📅 HORARIOS</h5>
+                            
+                            <!-- Formulario de carga -->
+                            <div class="row mb-3">
+                                <div class="col-md-8">
+                                    <div class="input-group">
+                                        <span class="input-group-text">📁</span>
+                                        <input type="text" class="form-control" id="nombre_archivo" readonly 
+                                               value="{% if archivo_cargado %}ArchivoHorarios.xml{% else %}Seleccione un archivo...{% endif %}">
+                                        <input type="file" id="horarios_file" name="horarios_file" accept=".xml" style="display: none;">
+                                        <button class="btn btn-outline-secondary" type="button" onclick="document.getElementById('horarios_file').click()">
+                                            Examinar
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <button class="btn btn-primary w-100" onclick="cargarHorarios()">
+                                        Cargar Archivo de Horarios
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabla de Horarios -->
+                    {% if horarios %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th scope="col" style="width: 20%;">CURSO</th>
+                                            <th scope="col">LUNES</th>
+                                            <th scope="col">MARTES</th>
+                                            <th scope="col">MIÉRCOLES</th>
+                                            <th scope="col">JUEVES</th>
+                                            <th scope="col">VIERNES</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for curso in horarios.LUNES.keys %}
+                                        <tr>
+                                            <td><strong>{{ curso }}</strong></td>
+                                            <td>
+                                                {% for horario in horarios.LUNES.curso %}
+                                                    <span class="badge bg-primary">{{ horario }}</span><br>
+                                                {% endfor %}
+                                            </td>
+                                            <td>
+                                                {% for horario in horarios.MARTES.curso %}
+                                                    <span class="badge bg-primary">{{ horario }}</span><br>
+                                                {% endfor %}
+                                            </td>
+                                            <td>
+                                                {% for horario in horarios.MIERCOLES.curso %}
+                                                    <span class="badge bg-primary">{{ horario }}</span><br>
+                                                {% endfor %}
+                                            </td>
+                                            <td>
+                                                {% for horario in horarios.JUEVES.curso %}
+                                                    <span class="badge bg-primary">{{ horario }}</span><br>
+                                                {% endfor %}
+                                            </td>
+                                            <td>
+                                                {% for horario in horarios.VIERNES.curso %}
+                                                    <span class="badge bg-primary">{{ horario }}</span><br>
+                                                {% endfor %}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="alert alert-info text-center">
+                                <i class="fas fa-info-circle fa-2x mb-3"></i>
+                                <h5>No hay horarios cargados</h5>
+                                <p class="mb-0">Por favor, carga un archivo XML de horarios para visualizar tu tabla de horarios.</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Información del Tutor -->
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6>📋 Información del Tutor</h6>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <strong>Nombre:</strong> {{ user.nombre }}
+                                        </div>
+                                        <div class="col-md-4">
+                                            <strong>Registro Personal:</strong> {{ user.registro_personal }}
+                                        </div>
+                                        <div class="col-md-4">
+                                            <strong>Cursos Asignados:</strong> XXX, YYY, ZZZ, WWW
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sección de Notas y Reportes -->
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>📊 GESTIÓN DE NOTAS</h5>
+                                </div>
+                                <div class="card-body">
+                                    <!-- Botón para generar notas -->
+                                    <div class="row mb-3">
+                                        <div class="col-md-12">
+                                            <button class="btn btn-info" onclick="generarNotas()">
+                                                🎲 Generar Notas de Prueba
+                                            </button>
+                                            <small class="text-muted ms-2">
+                                                Genera notas aleatorias para todos los cursos asignados
+                                            </small>
+                                        </div>
+                                    </div>
+
+                                    <!-- Sección de Reportes -->
+                                    {% if notas_generadas %}
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h6>📈 REPORTE DE RESUMEN DE NOTAS</h6>
+                                            
+                                            <!-- Formulario de selección de curso -->
+                                            <form method="post" class="mb-3">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="generar_reporte">
+                                                <div class="row align-items-end">
+                                                    <div class="col-md-6">
+                                                        <label for="curso_seleccionado" class="form-label">Seleccionar Curso:</label>
+                                                        <select name="curso_seleccionado" id="curso_seleccionado" class="form-select" required>
+                                                            <option value="">Elige un curso...</option>
+                                                            {% for curso in cursos_disponibles %}
+                                                            <option value="{{ curso }}" {% if curso_seleccionado == curso %}selected{% endif %}>
+                                                                {{ curso }} - {% if curso == 'XXX' %}Matemáticas Discretas
+                                                                {% elif curso == 'YYY' %}Programación Avanzada
+                                                                {% elif curso == 'ZZZ' %}Bases de Datos
+                                                                {% elif curso == 'WWW' %}Redes de Computadoras{% endif %}
+                                                            </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <button type="submit" class="btn btn-primary w-100">
+                                                            🔍 Seleccionar
+                                                        </button>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <button type="button" class="btn btn-success w-100" onclick="generarPDF()">
+                                                            📄 Generar PDF
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </form>
+
+                                            <!-- Gráfico de promedios -->
+                                            {% if promedios %}
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <h6>REVISIÓN DE REPORTE PROMEDIO DE NOTAS</h6>
+                                                    <div class="card bg-light">
+                                                        <div class="card-body">
+                                                            <canvas id="promediosChart" width="400" height="150"></canvas>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <!-- Tabla de estadísticas -->
+                                                    <div class="mt-3">
+                                                        <table class="table table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Actividad</th>
+                                                                    <th>Promedio</th>
+                                                                    <th>Cantidad</th>
+                                                                    <th>Máximo</th>
+                                                                    <th>Mínimo</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {% for actividad, datos in promedios.items %}
+                                                                <tr>
+                                                                    <td><strong>{{ actividad }}</strong></td>
+                                                                    <td>
+                                                                        <span class="badge {% if datos.promedio >= 60 %}bg-success{% elif datos.promedio >= 40 %}bg-warning{% else %}bg-danger{% endif %}">
+                                                                            {{ datos.promedio }}
+                                                                        </span>
+                                                                    </td>
+                                                                    <td>{{ datos.cantidad }}</td>
+                                                                    <td>{{ datos.maximo }}</td>
+                                                                    <td>{{ datos.minimo }}</td>
+                                                                </tr>
+                                                                {% endfor %}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    {% else %}
+                                    <div class="alert alert-warning">
+                                        <h6>📝 Sin datos de notas</h6>
+                                        <p class="mb-0">Para generar reportes, primero debes generar notas de prueba usando el botón anterior.</p>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones de acción -->
+                    <div class="row mt-3">
+                        <div class="col-md-12 text-center">
+                            <a href="/notas/" class="btn btn-success me-2">
+                                📊 Ver Notas Detalladas
+                            </a>
+                            <a href="/login/logout/" class="btn btn-outline-danger">
+                                🚪 Cerrar Sesión
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Formulario oculto para cargar horarios -->
+<form method="post" enctype="multipart/form-data" id="cargarHorariosForm" style="display: none;">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="cargar_horarios">
+    <input type="file" name="horarios_file" id="horarios_file_hidden">
+</form>
+
+<!-- Formulario oculto para generar notas -->
+<form method="post" id="generarNotasForm" style="display: none;">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="generar_notas">
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Actualizar nombre del archivo cuando se selecciona
+document.getElementById('horarios_file').addEventListener('change', function(e) {
+    const fileName = e.target.files[0]?.name || 'Seleccione un archivo...';
+    document.getElementById('nombre_archivo').value = fileName;
+});
+
+function cargarHorarios() {
+    const fileInput = document.getElementById('horarios_file');
+    
+    if (!fileInput.files.length) {
+        alert('Por favor, selecciona un archivo XML primero');
+        return;
+    }
+    
+    const file = fileInput.files[0];
+    if (!file.name.endsWith('.xml')) {
+        alert('Por favor, selecciona un archivo XML válido');
+        return;
+    }
+    
+    // Copiar archivo al formulario oculto y enviar
+    const hiddenInput = document.getElementById('horarios_file_hidden');
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+    hiddenInput.files = dataTransfer.files;
+    
+    document.getElementById('cargarHorariosForm').submit();
+}
+
+function generarNotas() {
+    if (confirm('¿Estás seguro de generar notas de prueba para todos los cursos asignados?')) {
+        document.getElementById('generarNotasForm').submit();
+    }
+}
+
+function generarPDF() {
+    const cursoSeleccionado = document.getElementById('curso_seleccionado').value;
+    if (!cursoSeleccionado) {
+        alert('Por favor, selecciona un curso primero');
+        return;
+    }
+    
+    // Simulación de generación de PDF con Graphviz
+    alert(`Generando PDF para el curso ${cursoSeleccionado} con Graphviz...\n\nEsta función generaría un reporte PDF con el gráfico de promedios usando Graphviz.`);
+    
+    // En un entorno real, aquí se haría una llamada al backend para generar el PDF
+    // window.open(`/tutor/generar_pdf/?curso=${cursoSeleccionado}`, '_blank');
+}
+
+// Crear gráfico de promedios cuando se carguen los datos
+document.addEventListener('DOMContentLoaded', function() {
+    {% if promedios %}
+    const ctx = document.getElementById('promediosChart').getContext('2d');
+    const promediosData = {{ promedios|safe }};
+    
+    const actividades = Object.keys(promediosData);
+    const promedios = actividades.map(act => promediosData[act].promedio);
+    
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: actividades,
+            datasets: [{
+                label: 'Promedio de Notas',
+                data: promedios,
+                backgroundColor: promedios.map(p => {
+                    if (p >= 60) return 'rgba(40, 167, 69, 0.6)';  // Verde
+                    if (p >= 40) return 'rgba(255, 193, 7, 0.6)'; // Amarillo
+                    return 'rgba(220, 53, 69, 0.6)';               // Rojo
+                }),
+                borderColor: promedios.map(p => {
+                    if (p >= 60) return 'rgb(40, 167, 69)';     // Verde
+                    if (p >= 40) return 'rgb(255, 193, 7)';     // Amarillo
+                    return 'rgb(220, 53, 69)';                     // Rojo
+                }),
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    title: {
+                        display: true,
+                        text: 'Promedio de Notas'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Actividades'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: 'Promedio de Notas por Actividad'
+                }
+            }
+        }
+    });
+    {% endif %}
+});
+</script>
+{% endblock %}

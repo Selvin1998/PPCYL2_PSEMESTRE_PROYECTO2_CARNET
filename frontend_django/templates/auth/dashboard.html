@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - {{ role|title }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Bienvenido, {{ user.nombre|default:user.username|default:"Usuario" }}!</h5>
+                <small class="text-muted">Rol: {{ role|title }}</small>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Información de Usuario</h6>
+                        <table class="table table-sm">
+                            <tr>
+                                <td><strong>Nombre:</strong></td>
+                                <td>{{ user.nombre|default:"No disponible" }}</td>
+                            </tr>
+                            {% if user.username %}
+                            <tr>
+                                <td><strong>Usuario:</strong></td>
+                                <td>{{ user.username }}</td>
+                            </tr>
+                            {% endif %}
+                            {% if user.registro_personal %}
+                            <tr>
+                                <td><strong>Registro Personal:</strong></td>
+                                <td>{{ user.registro_personal }}</td>
+                            </tr>
+                            {% endif %}
+                            {% if user.carnet %}
+                            <tr>
+                                <td><strong>Carnet:</strong></td>
+                                <td>{{ user.carnet }}</td>
+                            </tr>
+                            {% endif %}
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Estado del Sistema</h6>
+                        <div class="alert {% if backend_status.status == 'success' %}alert-success{% else %}alert-danger{% endif %}">
+                            <strong>Backend:</strong> 
+                            {% if backend_status.status == 'success' %}
+                                <span class="text-success">Conectado</span>
+                            {% else %}
+                                <span class="text-danger">Desconectado</span>
+                            {% endif %}
+                            <br>
+                            <small>{{ backend_status.message|default:"Sin información" }}</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="row">
+                    <div class="col-12">
+                        <h6>Acciones Rápidas</h6>
+                        {% if role == 'admin' %}
+                            <a href="/admin/" class="btn btn-primary me-2">Panel de Administración</a>
+                            <a href="/admin/cargar-configuracion/" class="btn btn-success me-2">Cargar Configuración</a>
+                            <a href="/admin/usuarios/" class="btn btn-info me-2">Ver Usuarios</a>
+                        {% elif role == 'tutor' %}
+                            <a href="/tutor/" class="btn btn-primary me-2">Panel de Tutor</a>
+                            <a href="/tutor/horarios/" class="btn btn-success me-2">Gestionar Horarios</a>
+                            <a href="/tutor/notas/" class="btn btn-info me-2">Gestionar Notas</a>
+                        {% elif role == 'estudiante' %}
+                            <a href="/notas/" class="btn btn-primary me-2">Ver Mis Notas</a>
+                            <a href="/notas/mis-cursos/" class="btn btn-info me-2">Mis Cursos</a>
+                        {% endif %}
+                        
+                        <a href="/logout/" class="btn btn-danger float-end">Cerrar Sesión</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

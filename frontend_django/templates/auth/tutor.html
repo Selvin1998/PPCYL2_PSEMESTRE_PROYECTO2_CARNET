@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% block title %}Panel Tutor - Sistema de Gestión Educativa{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Menú lateral -->
+        <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+            <div class="position-sticky pt-3">
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                    <span>Menú Tutor</span>
+                </h6>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#cargar-archivo">
+                            📁 Cargar Archivo
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#ver-usuarios">
+                            👥 Ver Usuarios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#informacion">
+                            ℹ️ Información
+                        </a>
+                    </li>
+                </ul>
+                
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                    <span>Sesión</span>
+                </h6>
+                <ul class="nav flex-column mb-2">
+                    <li class="nav-item">
+                        <a class="nav-link text-danger" href="/login/logout/">
+                            🚪 Cerrar Sesión
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Contenido principal -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">CARGA DE ARCHIVOS</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <span class="badge bg-success">Bienvenido/a {{ user.nombre }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#cargarArchivoModal">
+                            📤 Cargar Archivo
+                        </button>
+                        <button type="button" class="btn btn-success" onclick="procesarXML()">
+                            ⚙️ Procesar Datos
+                        </button>
+                        <button type="button" class="btn btn-warning" onclick="limpiarDatos()">
+                            🧹 Limpiar Datos
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Áreas de texto -->
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>ENTRADA</h5>
+                    <textarea id="xml_entrada" name="xml_entrada" class="form-control" rows="20" placeholder="Aquí aparecerá el contenido XML del archivo cargado...">{{ xml_entrada }}</textarea>
+                </div>
+                <div class="col-md-6">
+                    <h5>SALIDA</h5>
+                    <textarea id="xml_salida" name="xml_salida" class="form-control" rows="20" placeholder="Aquí aparecerá el resultado del procesamiento XML..." readonly>{{ xml_salida }}</textarea>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Modal para cargar archivo -->
+<div class="modal fade" id="cargarArchivoModal" tabindex="-1" aria-labelledby="cargarArchivoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cargarArchivoModalLabel">Cargar Archivo XML</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" enctype="multipart/form-data" id="cargarForm">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <input type="hidden" name="action" value="cargar">
+                    <div class="mb-3">
+                        <label for="xml_file" class="form-label">Selecciona un archivo XML</label>
+                        <input type="file" class="form-control" id="xml_file" name="xml_file" accept=".xml" required>
+                        <div class="form-text">Solo se aceptan archivos con extensión .xml</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Cargar Archivo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Formulario oculto para procesar y limpiar -->
+<form method="post" id="procesarForm" style="display: none;">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="procesar">
+    <input type="hidden" name="xml_entrada" id="xml_entrada_hidden">
+</form>
+
+<form method="post" id="limpiarForm" style="display: none;">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="limpiar">
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function procesarXML() {
+    const xmlEntrada = document.getElementById('xml_entrada').value;
+    if (!xmlEntrada.trim()) {
+        alert('Por favor, carga un archivo XML primero');
+        return;
+    }
+    document.getElementById('xml_entrada_hidden').value = xmlEntrada;
+    document.getElementById('procesarForm').submit();
+}
+
+function limpiarDatos() {
+    if (confirm('¿Estás seguro de que quieres limpiar todos los datos?')) {
+        document.getElementById('limpiarForm').submit();
+    }
+}
+
+// Auto-scroll al área de entrada cuando se carga contenido
+window.addEventListener('load', function() {
+    const xmlEntrada = document.getElementById('xml_entrada');
+    if (xmlEntrada.value.trim()) {
+        xmlEntrada.scrollTop = xmlEntrada.scrollHeight;
+    }
+});
+</script>
+{% endblock %}

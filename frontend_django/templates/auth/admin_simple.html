@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}Panel Administrador - Sistema de Gestión Educativa{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Menú lateral -->
+        <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+            <div class="position-sticky pt-3">
+                <!-- Perfil del usuario -->
+                <div class="text-center mb-4">
+                    <div class="mb-2">
+                        <img src="https://picsum.photos/seed/admin/80/80.jpg" class="rounded-circle" alt="Admin" width="80" height="80">
+                    </div>
+                    <h6 class="mb-1">Admin</h6>
+                    <small class="text-muted">Administrador</small>
+                </div>
+                
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                    <span>Menú</span>
+                </h6>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">
+                            <i class="fas fa-upload"></i> Cargar Archivo XML
+                        </a>
+                    </li>
+                </ul>
+                
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                    <span>Sesión</span>
+                </h6>
+                <ul class="nav flex-column mb-2">
+                    <li class="nav-item">
+                        <a class="nav-link text-danger" href="/login/logout/">
+                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Contenido principal -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">IPC2-AcadNet</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <span class="badge bg-success">Administrador</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección de Cargar Archivo XML -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>CARGAR ARCHIVO XML</h4>
+                        </div>
+                        <div class="card-body">
+                            <form method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="cargar">
+                                <div class="row align-items-end">
+                                    <div class="col-md-8">
+                                        <label for="xml_file" class="form-label">Seleccionar archivo XML:</label>
+                                        <input type="file" class="form-control" id="xml_file" name="xml_file" accept=".xml">
+                                        <div class="form-text">Carga el archivo XML para procesar la configuración del sistema</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            <i class="fas fa-upload"></i> Cargar Archivo
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!-- Áreas de texto -->
+                            {% if xml_entrada %}
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <h5>ENTRADA</h5>
+                                    <textarea class="form-control" rows="10" readonly>{{ xml_entrada }}</textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5>SALIDA</h5>
+                                    <textarea class="form-control" rows="10" readonly>{{ xml_salida }}</textarea>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+{% endblock %}

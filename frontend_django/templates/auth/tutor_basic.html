@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+
+{% block title %}Panel Tutor - Sistema de Gestión Educativa{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Menú lateral -->
+        <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+            <div class="position-sticky pt-3">
+                <!-- Perfil del usuario -->
+                <div class="text-center mb-4">
+                    <div class="mb-2">
+                        <img src="https://picsum.photos/seed/tutor/80/80.jpg" class="rounded-circle" alt="Tutor" width="80" height="80">
+                    </div>
+                    <h6 class="mb-1">Tutor</h6>
+                    <small class="text-muted">Profesor</small>
+                </div>
+                
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                    <span>Menú</span>
+                </h6>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link {% if seccion_activa == 'horarios' %}active{% endif %}" href="?seccion=horarios">
+                            <i class="fas fa-calendar"></i> Cargar Horarios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if seccion_activa == 'notas' %}active{% endif %}" href="?seccion=notas">
+                            <i class="fas fa-chart-bar"></i> Generar Notas
+                        </a>
+                    </li>
+                </ul>
+                
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                    <span>Sesión</span>
+                </h6>
+                <ul class="nav flex-column mb-2">
+                    <li class="nav-item">
+                        <a class="nav-link text-danger" href="/login/logout/">
+                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Contenido principal -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">IPC2-AcadNet</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <span class="badge bg-primary">Tutor</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección de Cargar Horarios -->
+            {% if seccion_activa == 'horarios' or not seccion_activa %}
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>CARGAR HORARIOS</h4>
+                        </div>
+                        <div class="card-body">
+                            <form method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="cargar_horarios">
+                                <div class="row align-items-end">
+                                    <div class="col-md-8">
+                                        <label for="horarios_file" class="form-label">Seleccionar archivo XML de horarios:</label>
+                                        <input type="file" class="form-control" id="horarios_file" name="horarios_file" accept=".xml">
+                                        <div class="form-text">Carga el archivo XML con los horarios de tus cursos asignados</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            <i class="fas fa-upload"></i> Cargar Horarios
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!-- Tabla de horarios -->
+                            {% if horarios_procesados %}
+                            <div class="mt-4">
+                                <h5>Horarios Cargados</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th>Curso</th>
+                                                <th>Día</th>
+                                                <th>Hora Inicio</th>
+                                                <th>Hora Fin</th>
+                                                <th>Aula</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for horario in horarios_procesados %}
+                                            <tr>
+                                                <td><strong>{{ horario.curso }}</strong></td>
+                                                <td>{{ horario.dia }}</td>
+                                                <td>{{ horario.hora_inicio }}</td>
+                                                <td>{{ horario.hora_fin }}</td>
+                                                <td>{{ horario.aula }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Sección de Generar Notas -->
+            {% if seccion_activa == 'notas' %}
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>GENERAR NOTAS DE PRUEBA</h4>
+                        </div>
+                        <div class="card-body">
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="generar_notas">
+                                <div class="row align-items-end">
+                                    <div class="col-md-8">
+                                        <label for="curso_seleccionado" class="form-label">Seleccionar curso:</label>
+                                        <select name="curso_seleccionado" id="curso_seleccionado" class="form-select">
+                                            <option value="XXX">XXX - Matemáticas</option>
+                                            <option value="YYY">YYY - Programación</option>
+                                            <option value="ZZZ">ZZZ - Bases de Datos</option>
+                                            <option value="WWW">WWW - Redes</option>
+                                        </select>
+                                        <div class="form-text">Selecciona el curso para generar notas de prueba</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button type="submit" class="btn btn-success w-100">
+                                            <i class="fas fa-dice"></i> Generar Notas
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!-- Tabla de notas -->
+                            {% if notas_generadas %}
+                            <div class="mt-4">
+                                <h5>Notas Generadas</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th>Estudiante</th>
+                                                <th>Actividad</th>
+                                                <th>Nota</th>
+                                                <th>Estado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for nota in notas_generadas %}
+                                            <tr>
+                                                <td>{{ nota.estudiante }}</td>
+                                                <td>{{ nota.actividad }}</td>
+                                                <td>
+                                                    <span class="badge {% if nota.nota >= 60 %}bg-success{% elif nota.nota >= 40 %}bg-warning{% else %}bg-danger{% endif %}">
+                                                        {{ nota.nota }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span class="badge {% if nota.nota >= 60 %}bg-success{% else %}bg-danger{% endif %}">
+                                                        {% if nota.nota >= 60 %}Aprobado{% else %}Reprobado{% endif %}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </main>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+{% endblock %}

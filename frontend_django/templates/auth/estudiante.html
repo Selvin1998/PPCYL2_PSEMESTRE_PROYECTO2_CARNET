@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+
+{% block title %}Panel Estudiante - Sistema de Gestión Educativa{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h4>🎓 Panel del Estudiante - {{ user.nombre }}</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Información del estudiante -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <div class="alert alert-info">
+                                <h6>📋 Información Personal</h6>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <strong>Nombre:</strong> {{ user.nombre }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <strong>Carnet:</strong> {{ user.carnet }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <strong>Estado:</strong> <span class="badge bg-success">Activo</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Configuración del sistema -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6>⚙️ Configuración del Sistema</h6>
+                                </div>
+                                <div class="card-body">
+                                    <form method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="cargar_config">
+                                        <div class="row align-items-end">
+                                            <div class="col-md-8">
+                                                <label for="config_file" class="form-label">Cargar Archivo de Configuración XML:</label>
+                                                <input type="file" class="form-control" id="config_file" name="config_file" accept=".xml" required>
+                                                <div class="form-text">Carga el archivo XML con la configuración de cursos, tutores y estudiantes</div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <button type="submit" class="btn btn-primary w-100">
+                                                    📁 Cargar Configuración
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Consulta de Notas -->
+                    {% if xml_config %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6>📊 Consulta de Notas</h6>
+                                </div>
+                                <div class="card-body">
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="consultar_notas">
+                                        <div class="row align-items-end">
+                                            <div class="col-md-6">
+                                                <label for="curso_seleccionado" class="form-label">Seleccionar Curso:</label>
+                                                <select name="curso_seleccionado" id="curso_seleccionado" class="form-select" required>
+                                                    <option value="">Elige un curso...</option>
+                                                    {% for curso in cursos_asignados %}
+                                                    <option value="{{ curso.codigo }}" {% if curso_seleccionado == curso.codigo %}selected{% endif %}>
+                                                        {{ curso.codigo }} - {{ curso.nombre }}
+                                                    </option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <button type="submit" class="btn btn-success w-100">
+                                                    🔍 Consultar
+                                                </button>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <button type="button" class="btn btn-info w-100" onclick="generarSalida()">
+                                                    📄 Generar Archivo de Salida
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+
+                                    <!-- Tabla de notas -->
+                                    {% if notas_estudiante %}
+                                    <div class="mt-4">
+                                        <h6>Resultados para {{ curso_seleccionado }}</h6>
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-hover">
+                                                <thead class="table-dark">
+                                                    <tr>
+                                                        <th>Tarea</th>
+                                                        <th>Nota</th>
+                                                        <th>Estado</th>
+                                                        <th>Acciones</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for nota in notas_estudiante %}
+                                                    <tr>
+                                                        <td><strong>{{ nota.actividad }}</strong></td>
+                                                        <td>
+                                                            <span class="badge {% if nota.nota >= 60 %}bg-success{% elif nota.nota >= 40 %}bg-warning{% else %}bg-danger{% endif %}">
+                                                                {{ nota.nota }}
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="badge {% if nota.estado == 'Aprobado' %}bg-success{% else %}bg-danger{% endif %}">
+                                                                {{ nota.estado }}
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <button class="btn btn-sm btn-outline-primary" onclick="verDetalles('{{ nota.actividad }}', {{ nota.nota }})">
+                                                                📋 Detalles
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        
+                                        <!-- Resumen de notas -->
+                                        <div class="row mt-3">
+                                            <div class="col-md-12">
+                                                <div class="card bg-light">
+                                                    <div class="card-body">
+                                                        <h6>📈 Resumen Académico</h6>
+                                                        <div class="row text-center">
+                                                            <div class="col-md-3">
+                                                                <h5 class="text-primary">{{ notas_estudiante|length }}</h5>
+                                                                <small>Total Actividades</small>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <h5 class="text-info">0.0</h5>
+                                                                <small>Promedio</small>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <h5 class="text-success">0</h5>
+                                                                <small>Aprobadas</small>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <h5 class="text-danger">0</h5>
+                                                                <small>Reprobadas</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                    <div class="alert alert-warning mt-3">
+                                        <h6>📝 Sin notas disponibles</h6>
+                                        <p class="mb-0">Por favor, selecciona un curso para consultar tus notas.</p>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="alert alert-warning">
+                                <h6>⚠️ Configuración requerida</h6>
+                                <p class="mb-0">Por favor, carga el archivo de configuración XML para poder consultar tus notas.</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Botones de acción -->
+                    <div class="row mt-4">
+                        <div class="col-md-12 text-center">
+                            <a href="/login/logout/" class="btn btn-outline-danger">
+                                🚪 Cerrar Sesión
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function verDetalles(actividad, nota) {
+    alert(`Detalles de la actividad:\n\nActividad: ${actividad}\nNota: ${nota}\n\nAquí podrías mostrar más detalles como fecha de entrega, comentarios del profesor, etc.`);
+}
+
+function generarSalida() {
+    const cursoSeleccionado = document.getElementById('curso_seleccionado').value;
+    if (!cursoSeleccionado) {
+        alert('Por favor, selecciona un curso primero');
+        return;
+    }
+    
+    // Simulación de generación de archivo de salida
+    alert(`Generando archivo de salida para el curso ${cursoSeleccionado}...\n\nEl archivo contendría:\n- Total de tutores cargados correctamente\n- Total de estudiantes cargados correctamente\n- Total de asignaciones correctas e incorrectas\n\nEsta funcionalidad generaría un XML con las estadísticas del procesamiento.`);
+}
+</script>
+{% endblock %}

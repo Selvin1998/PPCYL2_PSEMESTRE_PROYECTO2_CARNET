@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - Sistema de Gestión{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card">
+            <div class="card-header text-center">
+                <h4>Iniciar Sesión</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="user_type" class="form-label">Selecciona tu tipo de usuario</label>
+                        <select name="user_type" id="user_type" class="form-select" required>
+                            <option value="">Elige tu rol...</option>
+                            <option value="admin">Administrador</option>
+                            <option value="tutor">Tutor</option>
+                            <option value="estudiante">Estudiante</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Contraseña</label>
+                        <input type="password" name="password" id="password" class="form-control" placeholder="Ingresa tu contraseña" required>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            Iniciar Sesión
+                        </button>
+                    </div>
+                </form>
+                
+                <hr>
+                
+                <div class="text-center">
+                    <small class="text-muted">
+                        <strong>Contraseñas de acceso:</strong><br>
+                        🏢 Administrador: admin123<br>
+                        👨‍🏫 Tutor: tutor123<br>
+                        🎓 Estudiante: est123
+                    </small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-body">
+                <h6>Estado del Sistema</h6>
+                <div id="backend-status">
+                    <div class="spinner-border spinner-border-sm" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                    Verificando conexión...
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Verificar estado del backend
+fetch('/login/api/status/')
+    .then(response => response.json())
+    .then(data => {
+        const statusDiv = document.getElementById('backend-status');
+        if (data.status === 'success') {
+            statusDiv.innerHTML = `
+                <span class="text-success">
+                    <i class="bi bi-check-circle-fill"></i> 
+                    ✅ Sistema funcionando correctamente
+                </span>
+            `;
+        } else {
+            statusDiv.innerHTML = `
+                <span class="text-danger">
+                    <i class="bi bi-x-circle-fill"></i> 
+                    ❌ Sistema no disponible: ${data.message}
+                </span>
+            `;
+        }
+    })
+    .catch(error => {
+        const statusDiv = document.getElementById('backend-status');
+        statusDiv.innerHTML = `
+            <span class="text-danger">
+                <i class="bi bi-x-circle-fill"></i> 
+                ❌ Error al verificar el sistema
+            </span>
+        `;
+    });
+</script>
+{% endblock %}
